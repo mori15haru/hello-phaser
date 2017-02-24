@@ -11,16 +11,27 @@
         var game = new Phaser.Game(300, 500, Phaser.CANVAS, '', { preload: preload, create: create });
         var on = false;
         var music;
+        var songs = ['c0', 'c1', 'o0', 'o1', 'o2'];
+        var stage = 0;
 
         function preload () {
           game.load.image('play', 'play-button.svg');
-          game.load.audio('test', '/music/chopin/c0.mp3');
+          game.load.audio('c0', '/music/chopin/c0.mp3');
+          game.load.audio('c1', '/music/chopin/c1.mp3');
+          game.load.audio('o0', '/music/others/o0.mp3');
+          game.load.audio('o1', '/music/others/o1.mp3');
+          game.load.audio('o2', '/music/others/o2.mp3');
         }
 
         function create () {
           game.stage.backgroundColor = "#336600";
+
+          nextSong();
+        }
+
+        function nextSong() {
+          music = game.add.audio(songs[stage]);
           questionText = game.add.text(10, 10, "Did Chopin write this?", { font: "20px Arial" });
-          music = game.add.audio('test');
           button = game.add.button(10,100,'play',play,this);
           button.scale.setTo(0.5,0.5);
 
@@ -28,29 +39,34 @@
           var text2 = game.add.text(10, 400-60, "No, Mozart did.", { font: "20px Arial" });
           text1.inputEnabled = true;
           text2.inputEnabled = true;
-          text1.events.onInputDown.add(function() { checkAnswer(true) }, this);
-          text2.events.onInputDown.add(function() { checkAnswer(false) }, this);
+
+          var text1Answer = songs[stage][0] == 'c';
+          var text2Answer = !text1Answer;
+
+          text1.events.onInputDown.add(function() { checkAnswer(text1Answer) }, this);
+          text2.events.onInputDown.add(function() { checkAnswer(text2Answer) }, this);
         }
 
         function checkAnswer(answer) {
           if (answer) {
+            alert('Good job!');
+            stage++;
+            music.stop();
             nextSong();
+            on = false;
           } else {
             tryAgain();
           }
         }
 
         function play(button) {
+          alert(on);
           on = !on;
           if (on) {
             music.play();
           } else {
             music.stop();
           }
-        }
-
-        function nextSong() {
-          alert('Good job!');
         }
 
         function tryAgain() {
