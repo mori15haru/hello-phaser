@@ -11,21 +11,34 @@
         var game = new Phaser.Game(300, 500, Phaser.CANVAS, '', { preload: preload, create: create });
         var on = false;
         var music;
-        var songs = ['c0', 'c1', 'o0', 'o1', 'o2'];
+        var chopinSongs = [];
+        var otherSongs = [];
+        var songs;
+        var chopinSongsNum = 10;
+        var otherSongsNum = 3;
         var stage = 0;
 
         function preload () {
           game.load.image('play', 'play-button.svg');
-          game.load.audio('c0', '/music/chopin/c0.mp3');
-          game.load.audio('c1', '/music/chopin/c1.mp3');
-          game.load.audio('o0', '/music/others/o0.mp3');
-          game.load.audio('o1', '/music/others/o1.mp3');
-          game.load.audio('o2', '/music/others/o2.mp3');
+          for (i = 0; i < chopinSongsNum; i++) {
+            name = 'c' + i.toString();
+            path = '/music/chopin/c' + i.toString() + '.mp3';
+
+            game.load.audio(name, path);
+            chopinSongs.push(name);
+          }
+          for (i = 0; i < otherSongsNum; i++) {
+            name = 'o' + i.toString();
+            path = '/music/others/o' + i.toString() + '.mp3';
+
+            game.load.audio(name, path);
+            otherSongs.push(name);
+          }
+          songs = chopinSongs.concat(otherSongs);
         }
 
         function create () {
           game.stage.backgroundColor = "#336600";
-
           nextSong();
         }
 
@@ -36,7 +49,7 @@
           button.scale.setTo(0.5,0.5);
 
           var text1 = game.add.text(10, 400-10, "Yes, Chopid did.", { font: "20px Arial" });
-          var text2 = game.add.text(10, 400-60, "No, Mozart did.", { font: "20px Arial" });
+          var text2 = game.add.text(10, 400-60, "Nah...", { font: "20px Arial" });
           text1.inputEnabled = true;
           text2.inputEnabled = true;
 
@@ -60,7 +73,6 @@
         }
 
         function play(button) {
-          alert(on);
           on = !on;
           if (on) {
             music.play();
