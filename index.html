@@ -8,7 +8,7 @@
   <body>
     <script type="text/javascript">
       window.onload = function() {
-        var game = new Phaser.Game(300, 500, Phaser.CANVAS, '', { preload: preload, create: create });
+        var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', { preload: preload, create: create });
         var on = false;
         var music;
         var chopinSongs = [];
@@ -17,9 +17,14 @@
         var chopinSongsNum = 10;
         var otherSongsNum = 3;
         var stage = 0;
+        var play_button;
+        var pause_button;
 
         function preload () {
+          game.load.image('background', 'background.jpg');
           game.load.image('play', 'play-button.svg');
+          game.load.image('pause', 'pause-button.svg');
+
           for (i = 0; i < chopinSongsNum; i++) {
             name = 'c' + i.toString();
             path = '/music/chopin/c' + i.toString() + '.mp3';
@@ -38,26 +43,41 @@
         }
 
         function create () {
-          game.stage.backgroundColor = "#336600";
+          game.stage.backgroundColor = "#8ed2c9";
+          render_button();
           nextSong();
+          play_button.visible = true;
+          pause_button.visible = false;
         }
 
         function nextSong() {
+          style = { font: "50px Georgia" };
           music = game.add.audio(songs[stage]);
-          questionText = game.add.text(10, 10, "Did Chopin write this?", { font: "20px Arial" });
-          button = game.add.button(10,100,'play',play,this);
-          button.scale.setTo(0.5,0.5);
+          questionText = game.add.text(game.world.centerX, game.world.centerY - 180, "Did Chopin write this?", style);
+          questionText.anchor.setTo(0.5, 0.5);
 
-          var text1 = game.add.text(10, 400-10, "Yes, Chopid did.", { font: "20px Arial" });
-          var text2 = game.add.text(10, 400-60, "Nah...", { font: "20px Arial" });
+          var text1 = game.add.text(game.world.centerX, game.world.centerY + 150, "YES", style);
+          var text2 = game.add.text(game.world.centerX, game.world.centerY + 200, "NAH", style);
           text1.inputEnabled = true;
           text2.inputEnabled = true;
+
+          text1.anchor.setTo(0.5, 0.5);
+          text2.anchor.setTo(0.5, 0.5);
 
           var text1Answer = songs[stage][0] == 'c';
           var text2Answer = !text1Answer;
 
           text1.events.onInputDown.add(function() { checkAnswer(text1Answer) }, this);
           text2.events.onInputDown.add(function() { checkAnswer(text2Answer) }, this);
+        }
+
+        function render_button() {
+          play_button = game.add.button(game.world.centerX, game.world.centerY - 10, 'play', play, this);
+          pause_button = game.add.button(game.world.centerX, game.world.centerY - 10, 'pause', play, this);
+          pause_button.scale.setTo(0.5,0.5);
+          pause_button.anchor.setTo(0.5, 0.5);
+          play_button.scale.setTo(0.5,0.5);
+          play_button.anchor.setTo(0.5, 0.5);
         }
 
         function checkAnswer(answer) {
@@ -76,8 +96,12 @@
           on = !on;
           if (on) {
             music.play();
+            play_button.visible = true;
+            pause_button.visible = false;
           } else {
             music.stop();
+            play_button.visible = false;
+            pause_button.visible = true;
           }
         }
 
