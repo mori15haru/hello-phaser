@@ -16,7 +16,7 @@
         var chopinSongs = [];
         var otherSongs = [];
         var songs;
-        var chopinSongsNum = 53;
+        var chopinSongsNum = 25;
         var otherSongsNum = 3;
         var stage = 0;
         var play_button;
@@ -57,8 +57,10 @@
           flash = game.add.text(game.world.centerX, game.world.centerY + 180, '', { font: "20px Georgia", fill: "#462066" });
           flash.anchor.setTo(0.5, 0.5);
 
-          scoreSheet = game.add.text(game.world.centerX, game.world.centerY - 350, score, { font: "20px" });
+          score_representation = score.match(/.{1,16}/g).join("\n");
+          scoreSheet = game.add.text(game.world.centerX, game.world.centerY - 350, score_representation, { font: "20px" });
           scoreSheet.anchor.setTo(0.5, 0.5);
+
           nextSong();
         }
 
@@ -78,7 +80,7 @@
         }
 
         function nextSong() {
-          style = { font: "30px Times", fill: "#fcf4d9" };
+          style = { font: "30px Serif", fill: "#fcf4d9" };
           music = game.add.audio(songs[stage]);
 
           questionNum.text = stage + 1;
