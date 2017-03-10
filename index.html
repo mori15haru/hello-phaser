@@ -6,6 +6,8 @@
     <script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>
   </head>
   <body>
+    <script src="chopin-list.js"></script>
+    <script src="others-list.js"></script>
     <script type="text/javascript">
       window.onload = function() {
         var game = new Phaser.Game(800, 800, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
@@ -23,7 +25,6 @@
         var flash;
         var score = "♫".repeat(chopinSongsNum + otherSongsNum);
         var scoreSheet;
-
         function preload () {
           game.load.image('background', 'background.jpg');
           game.load.image('play', 'play-button.svg');
@@ -112,7 +113,7 @@
 
         function checkAnswer(answer) {
           if (answer) {
-            flash.text = "Awesome ♬";
+            flash.text = chopinList[songs[stage]];//"Awesome ♬";
             flash.alpha = 1.0;;
             game.add.tween(flash).to( { alpha: 0 }, 2000, "Linear", true);
             stage++;
