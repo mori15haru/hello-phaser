@@ -8,19 +8,21 @@
   <body>
     <script type="text/javascript">
       window.onload = function() {
-        var game = new Phaser.Game(800, 800, Phaser.CANVAS, '', { preload: preload, create: create });
+        var game = new Phaser.Game(800, 800, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
         var on = false;
         var music;
         var chopinSongs = [];
         var otherSongs = [];
         var songs;
-        var chopinSongsNum = 10;
+        var chopinSongsNum = 53;
         var otherSongsNum = 3;
         var stage = 0;
         var play_button;
         var pause_button;
         var questionNum;
         var flash;
+        var score = "♫".repeat(chopinSongsNum + otherSongsNum);
+        var scoreSheet;
 
         function preload () {
           game.load.image('background', 'background.jpg');
@@ -29,7 +31,7 @@
 
           for (i = 0; i < chopinSongsNum; i++) {
             name = 'c' + i.toString();
-            path = '/music/chopin/c' + i.toString() + '.mp3';
+            path = '/music/chopin/c' + i.toString() + '.ogg';
 
             game.load.audio(name, path);
             chopinSongs.push(name);
@@ -54,14 +56,33 @@
           flash = game.add.text(game.world.centerX, game.world.centerY + 180, '', { font: "20px Georgia", fill: "#462066" });
           flash.anchor.setTo(0.5, 0.5);
 
+          scoreSheet = game.add.text(game.world.centerX, game.world.centerY - 350, score, { font: "20px" });
+          scoreSheet.anchor.setTo(0.5, 0.5);
           nextSong();
         }
 
+        function update () {
+          scoreSheet.clearColors();
+          bright = "#ffb85f";
+          dark = "#00aaa0";
+
+          for (i =0; i < 13; i++) {
+            if (i < stage) {
+              scoreSheet.colors.push(dark);
+            }
+            else {
+              scoreSheet.colors.push(bright);
+            }
+          }
+
+          console.log(scoreSheet.colors);
+        }
+
         function nextSong() {
-          style = { font: "30px Georgia", fill: "#fcf4d9" };
+          style = { font: "30px Times", fill: "#fcf4d9" };
           music = game.add.audio(songs[stage]);
 
-          questionNum.text = stage;
+          questionNum.text = stage + 1;
           questionNum.anchor.setTo(0.5, 0.5);
 
           questionText = game.add.text(game.world.centerX, game.world.centerY - 250, "Did Chopin write this?", style);
