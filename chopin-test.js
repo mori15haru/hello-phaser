@@ -23,7 +23,7 @@ window.onload = function() {
 
   function load_for (type) {
     if (type == 'chopin') {
-      num = chopinSongNum;
+      num = chopinSongsNum;
       prefix = 'c';
       dir = 'music/chopin/c';
       type = '.ogg';
@@ -35,7 +35,7 @@ window.onload = function() {
       prefix = 'o';
       dir = '/music/others/o';
       type = '.mp3';
-      list = otherList;
+      list = othersList;
       songs = otherSongs;
     }
     // Add music
@@ -76,7 +76,7 @@ window.onload = function() {
     answer.anchor.setTo(0.5, 0.5);
 
     scoreRepresentation = score.match(/.{1,16}/g).join("\n");
-    scoreSheet = game.add.text(centerX, centerY - 350, scoreRepresentation, { font: "20px", fill: bright });
+    scoreSheet = game.add.text(centerX, centerY - 350, scoreRepresentation, { font: "20px", fill: rajah });
     scoreSheet.anchor.setTo(0.5, 0.5);
 
     nextSong();
@@ -89,10 +89,10 @@ window.onload = function() {
 
     for (i =0; i < songs.length; i++) {
       if (i < stage) {
-        scoreSheet.colors.push(dark);
+        scoreSheet.colors.push(persian_green);
       }
       else {
-        scoreSheet.colors.push(bright);
+        scoreSheet.colors.push(rajah);
       }
     }
   }
@@ -114,11 +114,8 @@ window.onload = function() {
     text1.anchor.setTo(0.5, 0.5);
     text2.anchor.setTo(0.5, 0.5);
 
-    var text1Answer = songs[stage][0] == 'c';
-    var text2Answer = !text1Answer;
-
-    text1.events.onInputDown.add(function() { checkAnswer(text1Answer) }, this);
-    text2.events.onInputDown.add(function() { checkAnswer(text2Answer) }, this);
+    text1.events.onInputDown.add(checkAnswer, this);
+    text2.events.onInputDown.add(checkAnswer, this);
   }
 
   function render_button() {
@@ -130,7 +127,12 @@ window.onload = function() {
     playButton.anchor.setTo(0.5, 0.5);
   }
 
-  function checkAnswer(correct) {
+  function checkAnswer(ans) {
+    ans_one = songs[stage][0] == 'c' && ans.text == 'YES';
+    ans_two = songs[stage][0] == 'o' && ans.text == 'NAH';
+
+    correct = ans_one || ans_two;
+
     if (correct) {
       music.stop();
 
