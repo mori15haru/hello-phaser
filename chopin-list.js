@@ -52,4 +52,4 @@ var chopinList = {
   "c50": "frederick_chopin_-_concerto_2_in_f_minor,_3rd_movement.ogg",
   "c51": "ignacy_jan_paderewski_-_nocturne_in_f-sharp_major,_op._15,_no._2_(chopin)_-_hmv-db3711-2ea4573.ogg",
   "c52": "kristian_cvetkovic_-_chopin_-_etude_op.10_no.1.ogg"
-}
+};

@@ -1,83 +1,91 @@
 window.onload = function() {
   var game = new Phaser.Game(800, 800, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
   var on = false;
-  var music;
-  var chopinSongs = [];
-  var otherSongs = [];
-  var songs;
   var chopinSongsNum = 25; // Random 25 songs?
   var otherSongsNum = 3;
+  var score = "♫".repeat(chopinSongsNum + otherSongsNum);
+  var centerY = 450;
+  var centerX = 400;
   var stage = 0;
-  var play_button;
-  var pause_button;
+  var style = { font: "30px verdana", fill: off_yellow };
+  // initially empty
+  var chopinSongs = [];
+  var otherSongs = [];
+  var musicList = {};
+  var music;
+  var songs;
+  var playButton;
+  var pauseButton;
   var questionNum;
   var flash;
-  var score = "♫".repeat(chopinSongsNum + otherSongsNum);
+  var answer;
   var scoreSheet;
-  var musicList = {};
 
   function load_for (type) {
     if (type == 'chopin') {
-      for (i = 0; i < chopinSongsNum; i++) {
-        name = 'c' + i.toString();
-        path = '/music/chopin/c' + i.toString() + '.ogg';
-
-        game.load.audio(name, path);
-        chopinSongs.push(name);
-        musicList[name] = chopinList[name];
-      }
+      num = chopinSongNum;
+      prefix = 'c';
+      dir = 'music/chopin/c';
+      type = '.ogg';
+      list = chopinList;
+      songs = chopinSongs;
     }
     else {
-      for (i = 0; i < otherSongsNum; i++) {
-        name = 'o' + i.toString();
-        path = '/music/others/o' + i.toString() + '.mp3';
-
-        game.load.audio(name, path);
-        otherSongs.push(name);
-
-        musicList[name] = othersList[name];
-        console.log(musicList[name]);
-      }
+      num = otherSongsNum;
+      prefix = 'o';
+      dir = '/music/others/o';
+      type = '.mp3';
+      list = otherList;
+      songs = otherSongs;
+    }
+    // Add music
+    for (i = 0; i < num; i++) {
+      name = prefix + i.toString();
+      path = dir + i.toString() + type;
+      game.load.audio(name, path);
+      songs.push(name);
+      musicList[name] = list[name];
     }
   }
 
-  function load_songs () {
+  function loadSongs () {
     load_for('chopin');
     load_for('other');
     songs = chopinSongs.concat(otherSongs);
   }
 
   function preload () {
-    game.load.image('background', 'background.jpg');
     game.load.image('play', 'play-button.svg');
     game.load.image('pause', 'pause-button.svg');
-    load_songs();
+    loadSongs();
   }
 
   function create () {
     game.renderer.renderSession.roundPixels = true;
-    game.stage.backgroundColor = "#8ed2c9";
+    game.stage.backgroundColor = riptide;
 
     render_button();
-    play_button.visible = true;
-    pause_button.visible = false;
+    updateButtons();
 
-    questionNum = game.add.text(game.world.centerX, game.world.centerY - 300, stage, { font: "30px Georgia", fill: "#ff7a5a" });
+    questionNum = game.add.text(centerX, centerY - 280, stage, { font: "30px verdana", fill: coral });
 
-    flash = game.add.text(game.world.centerX, game.world.centerY + 180, '', { font: "20px Georgia", fill: "#462066" });
+    flash = game.add.text(centerX, centerY + 180, '', { font: "15px verdana", fill: blue_diamond });
     flash.anchor.setTo(0.5, 0.5);
 
-    score_temp = score.match(/.{1,16}/g).join("\n");
-    scoreSheet = game.add.text(game.world.centerX, game.world.centerY - 350, score_temp, { font: "20px" });
+    answer = game.add.text(centerX, centerY + 150, '', { font: "20px", fill: blue_diamond });
+    answer.anchor.setTo(0.5, 0.5);
+
+    scoreRepresentation = score.match(/.{1,16}/g).join("\n");
+    scoreSheet = game.add.text(centerX, centerY - 350, scoreRepresentation, { font: "20px", fill: bright });
     scoreSheet.anchor.setTo(0.5, 0.5);
 
     nextSong();
   }
 
-  function update () {
+  function update () {}
+
+  function updateScoreSheet () {
     scoreSheet.clearColors();
-    bright = "#ffb85f";
-    dark = "#00aaa0";
 
     for (i =0; i < songs.length; i++) {
       if (i < stage) {
@@ -87,21 +95,19 @@ window.onload = function() {
         scoreSheet.colors.push(bright);
       }
     }
-
   }
 
   function nextSong() {
-    style = { font: "30px Serif", fill: "#fcf4d9" };
     music = game.add.audio(songs[stage]);
 
     questionNum.text = stage + 1;
     questionNum.anchor.setTo(0.5, 0.5);
 
-    questionText = game.add.text(game.world.centerX, game.world.centerY - 250, "Did Chopin write this?", style);
+    questionText = game.add.text(centerX, centerY - 230, "Did Chopin write this?", style);
     questionText.anchor.setTo(0.5, 0.5);
 
-    var text1 = game.add.text(game.world.centerX, game.world.centerY + 230, "YES", style);
-    var text2 = game.add.text(game.world.centerX, game.world.centerY + 280, "NAH", style);
+    var text1 = game.add.text(centerX, centerY + 230, "YES", style);
+    var text2 = game.add.text(centerX, centerY + 280, "NAH", style);
     text1.inputEnabled = true;
     text2.inputEnabled = true;
 
@@ -116,47 +122,54 @@ window.onload = function() {
   }
 
   function render_button() {
-    play_button = game.add.button(game.world.centerX, game.world.centerY - 10, 'play', play, this);
-    pause_button = game.add.button(game.world.centerX, game.world.centerY - 10, 'pause', play, this);
-    pause_button.scale.setTo(0.5,0.5);
-    pause_button.anchor.setTo(0.5, 0.5);
-    play_button.scale.setTo(0.5,0.5);
-    play_button.anchor.setTo(0.5, 0.5);
+    playButton = game.add.button(centerX, centerY - 10, 'play', play, this);
+    pauseButton = game.add.button(centerX, centerY - 10, 'pause', play, this);
+    pauseButton.scale.setTo(0.5, 0.5);
+    pauseButton.anchor.setTo(0.5, 0.5);
+    playButton.scale.setTo(0.5, 0.5);
+    playButton.anchor.setTo(0.5, 0.5);
   }
 
-  function checkAnswer(answer) {
-    if (answer) {
-      alert(musicList[songs[stage]]);
-      flash.text = musicList[songs[stage]];//"Awesome ♬";
-      flash.alpha = 1.0;;
-      game.add.tween(flash).to( { alpha: 0 }, 2000, "Linear", true);
-      stage++;
+  function checkAnswer(correct) {
+    if (correct) {
       music.stop();
-      nextSong();
+
+      flash.text = musicList[songs[stage]];
+      flash.alpha = 1.0;
+      game.add.tween(flash).to( { alpha: 0 }, 2000, "Linear", true);
+
+      answer.text = "Awesome ♬";
+      answer.alpha = 1.0;
+      game.add.tween(answer).to( { alpha: 0 }, 2000, "Linear", true);
+
+      stage++;
       on = false;
-      play_button.visible = true;
-      pause_button.visible = false;
-    } else {
-      tryAgain();
+      updateButtons();
+      updateScoreSheet();
+
+      nextSong();
+    }
+    else {
+      flash.text = "Nah...♪";
+      flash.alpha = 1.0;
+      game.add.tween(flash).to( { alpha: 0 }, 2000, "Linear", true);
     }
   }
 
   function play(button) {
     on = !on;
+
     if (on) {
       music.play();
-      play_button.visible = false;
-      pause_button.visible = true;
-    } else {
-      music.stop();
-      play_button.visible = true;
-      pause_button.visible = false;
     }
+    else {
+      music.stop();
+    }
+    updateButtons();
   }
 
-  function tryAgain() {
-    flash.text = "Nah...♪";
-    flash.alpha = 1.0;;
-    game.add.tween(flash).to( { alpha: 0 }, 2000, "Linear", true);
+  function updateButtons() {
+    pauseButton.visible = on;
+    playButton.visible = !on;
   }
 };
