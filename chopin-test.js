@@ -128,6 +128,13 @@ window.onload = function() {
   }
 
   function checkAnswer(ans) {
+    if (!on) {
+      flash.text = "Listen first please...♪";
+      flash.alpha = 1.0;
+      game.add.tween(flash).to( { alpha: 0 }, 2000, "Linear", true);
+      return;
+    }
+
     ans_one = songs[stage][0] == 'c' && ans.text == 'YES';
     ans_two = songs[stage][0] == 'o' && ans.text == 'NAH';
 
